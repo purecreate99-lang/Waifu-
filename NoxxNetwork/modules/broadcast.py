@@ -8,12 +8,15 @@ from NoxxNetwork import (
     top_global_groups_collection,
     pm_users,
     OWNER_ID,
+    sudo_users,
     LOGGER,
 )
 
 
 async def broadcast(update: Update, context: CallbackContext) -> None:
-    if update.effective_user.id != OWNER_ID:
+    # 🔥 Owner ya Sudo users dono allow hain
+    user_id = update.effective_user.id
+    if user_id != OWNER_ID and str(user_id) not in (sudo_users or []):
         await update.message.reply_text("You are not authorized to use this command.")
         return
 
