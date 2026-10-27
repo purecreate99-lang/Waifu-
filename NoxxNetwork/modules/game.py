@@ -138,7 +138,7 @@ async def foot(update: Update, context: CallbackContext) -> None:
     if state['last_play'] and (now - state['last_play']) < FOOT_COOLDOWN:
         remaining = FOOT_COOLDOWN - (now - state['last_play'])
         await update.message.reply_text(
-            f"⏳ Please wait {remaining}s before your next football kick!"
+            f"⏳ Please wait {remaining}s before your next /foot kick!"
         )
         await _save_foot_state(user_id, state)
         return
@@ -179,7 +179,7 @@ async def foot(update: Update, context: CallbackContext) -> None:
     chances_left = state['chances']
 
     result = (
-        f"{label}\n\n"
+        f"{label}\n"
         f"🎉 Yᴏᴜ ᴡᴏɴ <b>{CURRENCY_SYMBOL}{_fmt(reward)} {CURRENCY}</b>!\n"
         f"🎯 Rᴇᴍᴀɪɴɪɴɢ Cʜᴀɴᴄᴇs: <b>{chances_left}/{FOOT_CHANCES_MAX}</b>"
     )
@@ -225,7 +225,7 @@ async def footstatus(update: Update, context: CallbackContext) -> None:
         f"⏳ <b>Cooldown:</b> "
         + (f"{cooldown_left}s" if cooldown_left else "Ready ✅") + "\n"
         f"🕐 <b>Next +1:</b> {next_regen_text}\n"
-        f"🔄 <b>Full refill in:</b> {rh}h {rm}m",
+        f"🔄 <b>Full refill in:</b> {rh}h {rm}m {rs}s",
         parse_mode='HTML',
     )
 
