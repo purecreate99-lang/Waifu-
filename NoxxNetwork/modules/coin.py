@@ -1,3 +1,4 @@
+
 import asyncio
 import random
 import time
@@ -163,127 +164,6 @@ async def wsend(update: Update, context: CallbackContext) -> None:
 
 
 # ---------------------------------------------------------------------------
-# /ball 🎳 — bowling (MAIN CHAT ONLY)
-# ---------------------------------------------------------------------------
-async def ball(update: Update, context: CallbackContext) -> None:
-    chat_id = update.effective_chat.id
-
-    # 🚫 Only allow in MAIN_CHAT_ID
-    if chat_id != MAIN_CHAT_ID:
-        await update.message.reply_text("⚠️ Please use /ball only in the Main chat!")
-        return
-
-    user = update.effective_user
-    user_id = user.id
-    now = int(time.time())
-
-    doc = await coins_collection.find_one({'user_id': user_id}) or {}
-    last_ball_time = int(doc.get('last_ball_time', 0))
-    window_start = int(doc.get('window_start', 0))
-    balls_used = int(doc.get('balls_used', 0))
-
-    # ⏳ Cooldown check (40 seconds)
-    elapsed = now - last_ball_time
-    if last_ball_time and elapsed < BALL_COOLDOWN:
-        remaining = BALL_COOLDOWN - elapsed
-        await update.message.reply_text(
-            f"⏳ Please Wait {remaining}s before using /ball again."
-        )
-        return
-
-    # 🔄 12-hour window reset
-    if now - window_start >= WINDOW_DURATION:
-        balls_used = 0
-        window_start = now
-
-    # 🎳 Check balls remaining
-    if balls_used >= BALLS_PER_WINDOW:
-        remaining = WINDOW_DURATION - (now - window_start)
-        hours = remaining // 3600
-        minutes = (remaining % 3600) // 60
-        await update.message.reply_text(
-            f"🎳 <b>Yᴏᴜ'ᴠᴇ ᴜsᴇᴅ ᴀʟʟ {BALLS_PER_WINDOW} ʙᴀʟʟs!</b>\n\n"
-            f"⏳ Cᴏᴍᴇ ʙᴀᴄᴋ ɪɴ <b>{hours}ʜ {minutes}ᴍ</b> ғᴏʀ ɴᴇxᴛ {BALLS_PER_WINDOW} ʙᴀʟʟs.",
-            parse_mode='HTML',
-        )
-        return
-
-    # 🎬 Bowling animation
-    msg = await update.message.reply_text("🎳")
-    frames = [
-        "🎳\n\n<i>Ball is ready...</i>",
-        "🎳 ⚪\n\n<i>Rolling...</i>",
-        "🎳  ⚪\n\n<i>Going...</i>",
-        "🎳   ⚪\n\n<i>Almost there...</i>",
-        "🎳    💥",
-    ]
-    for frame in frames:
-        try:
-            await msg.edit_text(frame, parse_mode='HTML')
-        except Exception:
-            pass
-        await asyncio.sleep(0.5)
-
-    # 🎯 Score determination — Bowling system
-    roll = random.randint(1, 100)
-    if roll <= 10:
-        # 10% STRIKE
-        label = "🔥 <b>STRIKE!</b> Pᴇʀғᴇᴄᴛ sʜᴏᴛ!"
-        reward = 100
-        emoji = "💥"
-    elif roll <= 25:
-        # 15% SPARE
-        label = "🎯 <b>SPARE!</b> Gʀᴇᴀᴛ sʜᴏᴛ!"
-        reward = random.randint(50, 99)
-        emoji = "✨"
-    elif roll <= 50:
-        # 25% GOOD
-        label = "⭐ <b>Gᴏᴏᴅ sʜᴏᴛ!</b>"
-        reward = random.randint(30, 60)
-        emoji = "🌟"
-    elif roll <= 80:
-        # 30% NORMAL
-        label = "🙂 <b>Nɪᴄᴇ ᴛʀʏ!</b>"
-        reward = random.randint(15, 35)
-        emoji = "🎳"
-    else:
-        # 20% MISS
-        label = "😢 <b>MISS!</b> Bᴇᴛᴛᴇʀ ʟᴜᴄᴋ ɴᴇxᴛ ᴛɪᴍᴇ!"
-        reward = 10
-        emoji = "💨"
-
-    # 💰 Add coins
-    await add_coins(user_id, reward)
-
-    balls_used += 1
-    await coins_collection.update_one(
-        {'user_id': user_id},
-        {
-            '$set': {
-                'last_ball_time': now,
-                'window_start': window_start,
-                'balls_used': balls_used,
-            }
-        },
-        upsert=True,
-    )
-
-    balls_left = BALLS_PER_WINDOW - balls_used
-
-    result = (
-        f"🎳 {emoji}\n\n"
-        f"{label}\n\n"
-        f"🎉 Yᴏᴜ ᴡᴏɴ <b>{CURRENCY_SYMBOL}{reward} {CURRENCY}</b>!\n"
-        f"🎯 Rᴇᴍᴀɪɴɪɴɢ Cʜᴀɴᴄᴇs: <b>{balls_left}/{BALLS_PER_WINDOW}</b>"
-    )
-
-    try:
-        await msg.edit_text(result, parse_mode='HTML')
-    except Exception:
-        pass
-
-
-# ---------------------------------------------------------------------------
 # /wtop — top coin holders
 # ---------------------------------------------------------------------------
 async def wtop(update: Update, context: CallbackContext) -> None:
@@ -393,7 +273,6 @@ async def wremove(update: Update, context: CallbackContext) -> None:
 # ---------------------------------------------------------------------------
 application.add_handler(CommandHandler(["wpocket", "pocket", "balance"], wpocket, block=False))
 application.add_handler(CommandHandler(["wsend", "sendcoins", "pay"], wsend, block=False))
-application.add_handler(CommandHandler(["ball"], ball, block=False))
 application.add_handler(CommandHandler(["wtop", "cointop"], wtop, block=False))
 application.add_handler(CommandHandler(["wadd", "addcoins"], wadd, block=False))
 application.add_handler(CommandHandler(["wremove", "removecoins"], wremove, block=False))
