@@ -52,9 +52,8 @@ async def claim(update: Update, context: CallbackContext) -> None:
         minutes = (time_left.seconds % 3600) // 60
 
         await update.message.reply_text(
-            f"⏳ <b>You have already claimed your daily reward!</b>\n\n"
-            f"🕐 Resets at midnight (12:00 AM IST).\n"
-            f"Come back in <b>{hours}h {minutes}m</b>.",
+            f"⏳ <b>You have already claimed your daily reward!</b>\n"
+            f"Come back in <b>{hours}h {minutes}m {seconds}s</b>.",
             parse_mode='HTML'
         )
         return
@@ -71,10 +70,8 @@ async def claim(update: Update, context: CallbackContext) -> None:
     )
 
     await update.message.reply_text(
-        f"🎁 <b>Daily Reward Claimed!</b>\n\n"
-        f"💰 <b>Received:</b> {CURRENCY_SYMBOL}{_fmt(CLAIM_AMOUNT)} {CURRENCY}\n"
-        f"💳 <b>New Balance:</b> {CURRENCY_SYMBOL}{_fmt(new_balance)}\n\n"
-        f"🕐 <i>Come back tomorrow after 12:00 AM!</i>",
+        f"🎁 <b>𝐃ᴀɪʟʏ 𝐑ᴇᴡᴀʀᴅ 𝐂ʟᴀɪᴍᴇᴅ!</b>\n"
+        f"💰 <b>𝐑ᴇᴄᴇɪᴠᴇᴅ:</b> {CURRENCY_SYMBOL}{_fmt(CLAIM_AMOUNT)} {CURRENCY}",
         parse_mode='HTML'
     )
 
