@@ -53,7 +53,7 @@ async def claim(update: Update, context: CallbackContext) -> None:
 
         await update.message.reply_text(
             f"⏳ <b>You have already claimed your daily reward!</b>\n"
-            f"Come back in <b>{hours}h {minutes}m {seconds}s</b>.",
+            f"Come back in <b>{hours}h {minutes}m</b>.",
             parse_mode='HTML'
         )
         return
