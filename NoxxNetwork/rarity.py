@@ -35,7 +35,7 @@ RARITIES = {
 # Distinct defaults. They are weights, so they do not have to total exactly 100.
 # Owners can change any one with /setrarity <number> <probability>.
 DEFAULT_PROBABILITIES = {
-    1: 2.0,
+    1: 10.0,
     2: 1.0,
     3: 1.0,
     4: 1.0,
@@ -47,9 +47,9 @@ DEFAULT_PROBABILITIES = {
     10: 8.0,
     11: 1.0,
     12: 1.0,
-    13: 20.0,
-    14: 20.0,
-    15: 20.0,
+    13: 40.0,
+    14: 40.0,
+    15: 40.0,
     16: 1.0,
     17: 1.0,
     18: 1.0,
@@ -57,7 +57,7 @@ DEFAULT_PROBABILITIES = {
     20: 1.0,
     21: 6.0,
     22: 1.0,
-    23: 9.0,
+    23: 1.0,
 }
 
 # Compatibility aliases for characters uploaded before the 21-rarity system.
