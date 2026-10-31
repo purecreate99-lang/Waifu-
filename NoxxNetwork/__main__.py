@@ -176,7 +176,8 @@ async def choose_character_by_rarity(all_characters, chat_id):
             weighted_groups.append((number, weight, chars))
 
     if not weighted_groups:
-        return random.choice(filtered)
+        character = random.choice(filtered)
+        return character, rarity_id_from_value(character.get('rarity'))
 
     chosen = random.choices(
         [item[0] for item in weighted_groups],
@@ -221,6 +222,31 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     first_correct_guesses.pop(chat_id, None)
 
     symbol = rarity_symbol(character.get('rarity'))
+
+    # Send a rarity-emoji teaser only for selected seasonal/event rarities.
+    TEASER_RARITY_IDS = {
+        2,   # 🌟 Galaxies
+        3,   # 🌤️ Summer
+        4,   # 🍬 Galactic
+        5,   # 🎄 Christmas
+        6,   # 🎨 Holi edition
+        7,   # 🐦‍🔥 Marvelous
+        9,   # 🔖 Manga rush
+        11,  # 🛖 Tribe
+        12,  # 🛷 X-Mas
+        16,  # 🧣 Winters
+        17,  # 🪁 Skyrise
+        18,  # 🪔 Diwali edition
+        19,  # 🪢 Corrupted
+        20,  # 🪼 Exotic
+        22,  # 💝 Valentine
+        23,  # 🧶 Crochet Edition
+    }
+
+    if chosen_rarity_id in TEASER_RARITY_IDS:
+        await context.bot.send_message(chat_id=chat_id, text=symbol)
+        await asyncio.sleep(4)
+
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
